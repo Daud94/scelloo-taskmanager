@@ -19,6 +19,7 @@ export default class User extends Model {
             isEmailVerified: DataTypes.BOOLEAN,
             emailToken: DataTypes.STRING,
             tokenExpiry: DataTypes.DATE,
+            userType: DataTypes.ENUM('admin', 'user'),
         }, {
             sequelize,
             modelName: 'User',

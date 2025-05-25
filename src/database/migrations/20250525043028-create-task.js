@@ -1,43 +1,34 @@
 'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 export default {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('Users', {
+        await queryInterface.createTable('Tasks', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            firstName: {
+            userId: {
+                type: Sequelize.INTEGER,
+                references: {
+                    model: 'Users',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
+            },
+            title: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            lastName: {
+            description: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            email: {
-                type: Sequelize.STRING,
+            status: {
+                type: Sequelize.ENUM('pending', 'completed', 'in-progress'),
                 allowNull: false,
-                unique: true,
-            },
-            password: {
-                type: Sequelize.STRING,
-                allowNull: false,
-            },
-            isEmailVerified: {
-                type: Sequelize.BOOLEAN
-            },
-            emailToken: {
-                type: Sequelize.STRING
-            },
-            tokenExpiry: {
-                type: Sequelize.DATE
-            },
-            userType: {
-                type: Sequelize.ENUM('admin', 'user')
+                defaultValue: 'pending'
             },
             createdAt: {
                 allowNull: false,
@@ -49,8 +40,7 @@ export default {
             }
         });
     },
-
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('Users');
+        await queryInterface.dropTable('Tasks');
     }
 };
