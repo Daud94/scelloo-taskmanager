@@ -1,14 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import { Sequelize } from 'sequelize';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import config from '../config/config.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const basename = path.basename(__filename);
-import dotenv from 'dotenv';
-dotenv.config();
 const env = process.env.NODE_ENV || 'development';
 const envConfig = config[env];
 const db = {};
@@ -25,15 +26,20 @@ const files = fs
     ));
 
 for (const file of files) {
-  const modelModule = await import(path.join(__dirname, file));
-  const model = modelModule.default(sequelize, Sequelize.DataTypes);
-  db[model.name] = model;
+    const filePath = path.join(__dirname, file);
+    const fileUrl = pathToFileURL(filePath).href;
+    const modelModule = await import(fileUrl);
+    const ModelClass = modelModule.default;
+
+    // Initialize the model using the static initModel method
+    const model = ModelClass.initModel(sequelize);
+    db[model.name] = model;
 }
 
 Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
+    }
 });
 
 db.sequelize = sequelize;
