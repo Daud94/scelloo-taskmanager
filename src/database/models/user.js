@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes } from 'sequelize'
 
 export default class User extends Model {
     /**
@@ -11,21 +11,21 @@ export default class User extends Model {
     }
 
     static initModel(sequelize) {
-        User.init({
-            firstName: DataTypes.STRING,
-            lastName: DataTypes.STRING,
-            email: DataTypes.STRING,
-            password: DataTypes.STRING,
-            isEmailVerified: DataTypes.BOOLEAN,
-            emailToken: DataTypes.STRING,
-            tokenExpiry: DataTypes.DATE,
-            userType: DataTypes.ENUM('admin', 'user'),
-        }, {
-            sequelize,
-            modelName: 'User',
-            tableName: 'Users',
-        });
+        User.init(
+            {
+                firstName: DataTypes.STRING,
+                lastName: DataTypes.STRING,
+                email: DataTypes.STRING,
+                password: DataTypes.STRING,
+                userType: DataTypes.ENUM('admin', 'user'),
+            },
+            {
+                sequelize,
+                modelName: 'User',
+                tableName: 'Users',
+            }
+        )
 
-        return User;
+        return User
     }
 }

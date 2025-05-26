@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /** @type {import('sequelize-cli').Migration} */
 export default {
@@ -8,7 +8,7 @@ export default {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
             },
             firstName: {
                 type: Sequelize.STRING,
@@ -27,30 +27,21 @@ export default {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            isEmailVerified: {
-                type: Sequelize.BOOLEAN
-            },
-            emailToken: {
-                type: Sequelize.STRING
-            },
-            tokenExpiry: {
-                type: Sequelize.DATE
-            },
             userType: {
-                type: Sequelize.ENUM('admin', 'user')
+                type: Sequelize.ENUM('admin', 'user'),
             },
             createdAt: {
                 allowNull: false,
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
             },
             updatedAt: {
                 allowNull: false,
-                type: Sequelize.DATE
-            }
-        });
+                type: Sequelize.DATE,
+            },
+        })
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('Users');
-    }
-};
+        await queryInterface.dropTable('Users')
+    },
+}

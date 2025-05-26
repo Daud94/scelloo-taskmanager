@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 export default {
     async up(queryInterface, Sequelize) {
@@ -7,7 +7,7 @@ export default {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
             },
             userId: {
                 type: Sequelize.INTEGER,
@@ -28,19 +28,31 @@ export default {
             status: {
                 type: Sequelize.ENUM('pending', 'completed', 'in-progress'),
                 allowNull: false,
-                defaultValue: 'pending'
+                defaultValue: 'pending',
+            },
+            startDate: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
+            dueDate: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
+            endDate: {
+                type: Sequelize.DATE,
+                allowNull: true,
             },
             createdAt: {
                 allowNull: false,
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
             },
             updatedAt: {
                 allowNull: false,
-                type: Sequelize.DATE
-            }
-        });
+                type: Sequelize.DATE,
+            },
+        })
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('Tasks');
-    }
-};
+        await queryInterface.dropTable('Tasks')
+    },
+}

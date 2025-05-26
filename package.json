@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "nodemon src/main.js",
-    "migrate": "npx sequelize-cli db:migrate"
+    "migrate": "npx sequelize-cli db:migrate",
+    "lint": "npx prettier . --write"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +25,11 @@
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "eslint": "^9.27.0",
+    "globals": "^16.2.0",
     "nodemon": "^3.1.10",
+    "prettier": "3.5.3",
     "sequelize-cli": "^6.6.3"
   }
 }
