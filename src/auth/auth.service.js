@@ -13,7 +13,7 @@ export class AuthService {
 
     async register(payload) {
         const existingUser = await this.usersService.findOne({
-            where: { email: payload.email },
+            email: payload.email,
         })
         if (existingUser) {
             throw AppError.conflict('User already exists')
@@ -27,9 +27,7 @@ export class AuthService {
     }
 
     async login(payload) {
-        const user = await this.usersService.findOne({
-            where: { email: payload.email },
-        })
+        const user = await this.usersService.findOne({ email: payload.email })
         if (!user) {
             throw AppError.unauthorized('Invalid email')
         }
