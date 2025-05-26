@@ -9,10 +9,27 @@ const { Task } = db.sequelize.models
 export class TasksService {
     async findAll(options) {
         console.log(options)
+        const { page, limit, ...restOptions } = options
+        const offset = (page - 1) * limit
+
         const tasks = await Task.findAll({
-            where: options,
+            where: {
+                ...restOptions,
+                ...(options.userId && { userId: options.userId }),
+            },
+            offset: offset,
+            limit: limit,
         })
-        return tasks
+
+        const totalItems = await Task.count({
+            where: {
+                ...restOptions,
+                ...(options.userId && { userId: options.userId }),
+            },
+        })
+        const paginatedData = paginate(totalItems, limit, page)
+        paginatedData.data = tasks
+        return paginatedData
     }
 
     async findOne(options = {}) {
@@ -92,6 +109,25 @@ export class TasksService {
         }
 
         await task.update(modData)
+    }
+
+    async completeTask(userId, taskId) {
+        const task = await this.findById(taskId, {
+            userId: userId,
+            status: 'in-progress',
+        })
+        if (!task) {
+            throw AppError.notFound('Task not found')
+        }
+        if (task.status === 'completed') {
+            throw AppError.badRequest('Task is already completed')
+        }
+        if (task.status === 'pending') {
+            task.status = 'in-progress'
+        }
+        task.status = 'completed'
+        task.endDate = new Date()
+        await task.save()
     }
 
     async delete(id) {

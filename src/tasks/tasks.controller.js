@@ -40,8 +40,8 @@ router.post(
 // Get all tasks for the authenticated user
 router.get('/', AuthMiddleware, Query(TaskQueryDto), async (req, res, next) => {
     try {
-        const { title, description, status, startDate, endDate } = req.query
-        console.log(req.query)
+        const { title, description, status, startDate, endDate, page, limit } =
+            req.query
         const where = {}
         if (title) {
             where.title = {
@@ -62,6 +62,9 @@ router.get('/', AuthMiddleware, Query(TaskQueryDto), async (req, res, next) => {
                 [Op.between]: [new Date(startDate), new Date(endDate)],
             }
         }
+        where.userId = req.userId // Ensure only tasks for the authenticated user are retrieved
+        where.page = page
+        where.limit = limit
         const tasks = await tasksService.findAll(where)
 
         return res.status(200).json({
@@ -117,6 +120,18 @@ router.get('/reports', AuthMiddleware, async (req, res, next) => {
             success: true,
             message: 'Completion report generated successfully',
             data: report,
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+
+router.post('/complete/:id', AuthMiddleware, async (req, res, next) => {
+    try {
+        await tasksService.completeTask(req.userId, req.params.id)
+        return res.status(200).json({
+            success: true,
+            message: 'Task marked as completed successfully',
         })
     } catch (error) {
         next(error)
