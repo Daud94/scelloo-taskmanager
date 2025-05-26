@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon src/main.js",
     "migrate": "npx sequelize-cli db:migrate",
-    "lint": "npx prettier . --write"
+    "lint": "npx prettier . --write",
+    "seed": "npx sequelize-cli db:seed:all"
   },
   "keywords": [],
   "author": "",

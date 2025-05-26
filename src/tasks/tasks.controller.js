@@ -23,7 +23,7 @@ router.post(
         try {
             const task = await tasksService.create({
                 ...req.body,
-                userId: req.user.id,
+                userId: req.userId,
             })
 
             return res.status(201).json({
@@ -41,6 +41,7 @@ router.post(
 router.get('/', AuthMiddleware, Query(TaskQueryDto), async (req, res, next) => {
     try {
         const { title, description, status, startDate, endDate } = req.query
+        console.log(req.query)
         const where = {}
         if (title) {
             where.title = {
@@ -58,15 +59,64 @@ router.get('/', AuthMiddleware, Query(TaskQueryDto), async (req, res, next) => {
 
         if (startDate && endDate) {
             where.createdAt = {
-                [Op.between]: [startDate, endDate],
+                [Op.between]: [new Date(startDate), new Date(endDate)],
             }
         }
-        const tasks = await tasksService.findAll({ where })
+        const tasks = await tasksService.findAll(where)
 
         return res.status(200).json({
             success: true,
             message: 'Tasks retrieved successfully',
             data: tasks,
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Generate a report on time spent on tasks
+router.get(
+    '/report-time',
+    AuthMiddleware,
+    Query(ReportQueryDto),
+    async (req, res, next) => {
+        try {
+            const { page, limit } = req.query
+
+            // Admin can generate report for all tasks, regular users only for their own
+            const options =
+                req.userType === 'admin' ? {} : { userId: req.userId }
+            options.page = page
+            options.limit = limit
+
+            console.log(options)
+            // Generate time report
+            const report = await tasksService.generateTimeReport(options)
+
+            return res.status(200).json({
+                success: true,
+                message: 'Time tracking report generated successfully',
+                data: report,
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+)
+
+// Generate a report on task completion rates
+router.get('/reports', AuthMiddleware, async (req, res, next) => {
+    try {
+        // Admin can generate report for all tasks, regular users only for their own
+        const options = req.userType === 'admin' ? {} : { userId: req.userId }
+
+        // Generate completion report
+        const report = await tasksService.generateCompletionReport(options)
+
+        return res.status(200).json({
+            success: true,
+            message: 'Completion report generated successfully',
+            data: report,
         })
     } catch (error) {
         next(error)
@@ -89,7 +139,7 @@ router.get('/:id', AuthMiddleware, async (req, res, next) => {
 })
 
 // Update a task
-router.put(
+router.patch(
     '/:id',
     AuthMiddleware,
     Body(UpdateTaskDto),
@@ -98,7 +148,7 @@ router.put(
             const task = await tasksService.findById(req.params.id)
 
             // Check if the task belongs to the authenticated user
-            if (task.userId !== req.user.id) {
+            if (task.userId !== req.userId) {
                 throw AppError.forbidden(
                     'You do not have permission to update this task'
                 )
@@ -142,34 +192,6 @@ router.delete('/:id', AuthMiddleware, async (req, res, next) => {
         next(error)
     }
 })
-
-// Generate a report on time spent on tasks
-router.get(
-    '/report-time',
-    AuthMiddleware,
-    Query(ReportQueryDto),
-    async (req, res, next) => {
-        try {
-            const { page, limit } = req.query
-
-            // Admin can generate report for all tasks, regular users only for their own
-            const options =
-                req.user.userType === 'admin' ? {} : { userId: req.userId }
-            options.page = page
-            options.limit = limit
-            // Generate time report
-            const report = await tasksService.generateTimeReport(options)
-
-            return res.status(200).json({
-                success: true,
-                message: 'Time tracking report generated successfully',
-                data: report,
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
-)
 
 // Generate a report on task completion rates
 router.get('/reports', AuthMiddleware, async (req, res, next) => {

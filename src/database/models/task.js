@@ -38,23 +38,17 @@ export default class Task extends Model {
                     allowNull: false,
                     defaultValue: 'pending',
                 },
+                startDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                endDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
                 dueDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
-                },
-                startTime: {
-                    type: DataTypes.DATE,
-                    allowNull: true,
-                },
-                endTime: {
-                    type: DataTypes.DATE,
-                    allowNull: true,
-                },
-                timeSpent: {
-                    type: DataTypes.INTEGER,
-                    allowNull: true,
-                    defaultValue: 0,
-                    comment: 'Time spent on task in minutes',
                 },
             },
             {

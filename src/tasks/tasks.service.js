@@ -7,8 +7,11 @@ import { paginate } from '../utils/pagination.js'
 const { Task } = db.sequelize.models
 
 export class TasksService {
-    async findAll(options = {}) {
-        const tasks = await Task.findAll(options)
+    async findAll(options) {
+        console.log(options)
+        const tasks = await Task.findAll({
+            where: options,
+        })
         return tasks
     }
 
@@ -130,7 +133,7 @@ export class TasksService {
                     : new Date(task.endDate)
             )
             return {
-                ...task,
+                ...task.dataValues,
                 timeSpent: timeDifference,
             }
         })

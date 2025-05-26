@@ -31,7 +31,7 @@ export class AuthService {
             where: { email: payload.email },
         })
         if (!user) {
-            throw AppError.unauthorized('Invalid credentials')
+            throw AppError.unauthorized('Invalid email')
         }
 
         const isPasswordValid = await bcrypt.compare(

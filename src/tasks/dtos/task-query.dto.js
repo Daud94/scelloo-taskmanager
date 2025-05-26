@@ -7,10 +7,10 @@ export const TaskQueryDto = Joi.object({
     description: Joi.string().optional().messages({
         'string.empty': 'Description cannot be empty if provided',
     }),
-    startDate: Joi.date().allow(null).optional().messages({
+    startDate: Joi.date().optional().messages({
         'date.base': 'Start date must be a valid date',
     }),
-    endDate: Joi.date().allow(null).optional().messages({
+    endDate: Joi.date().optional().messages({
         'date.base': 'End date must be a valid date',
     }),
     status: Joi.string()
